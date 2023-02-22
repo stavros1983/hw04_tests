@@ -24,8 +24,48 @@ class PostPagesTests(TestCase):
         )
 
     def setUp(self):
+        self.unauthorized_user = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+
+    def test_redirect_unauthorized_user(self):
+        """Редирект неавторизованного пользователя"""
+        url1 = '/auth/login/?next=/create/'
+        url2 = f'/auth/login/?next=/posts/{self.post.id}/edit/'
+        pages = {'/create/': url1,
+                 f'/posts/{self.post.id}/edit/': url2}
+        for page, value in pages.items():
+            response = self.unauthorized_user.get(page)
+            self.assertRedirects(response, value)
+
+    def test_unauthorized_user_in(self):
+        """Проверка доступа для неавторизованного пользователя."""
+        field_urls_code = {
+            reverse(
+                'posts:index'): 200,
+            reverse(
+                'posts:group_list',
+                kwargs={'slug': self.group.slug}): 200,
+            reverse(
+                'posts:group_list',
+                kwargs={'slug': 'bad_slug'}): 404,
+            reverse(
+                'posts:profile',
+                kwargs={'username': self.user}): 200,
+            reverse(
+                'posts:post_detail',
+                kwargs={'post_id': self.post.id}): 200,
+            reverse(
+                'posts:edit',
+                kwargs={'post_id': self.post.id}): 302,
+            reverse(
+                'posts:create'): 302,
+            '/unexisting_page/': 404,
+        }
+        for url, response_code in field_urls_code.items():
+            with self.subTest(url=url):
+                status_code = self.unauthorized_user.get(url).status_code
+                self.assertEqual(status_code, response_code)
 
     def check_post_info(self, post):
         with self.subTest(post=post):
