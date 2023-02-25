@@ -25,9 +25,8 @@ class PostModelTest(TestCase):
 
     def test_models_have_correct_object_names(self):
         """Проверяем, что у моделей поста корректно работает __str__."""
-        post = PostModelTest.post
-        expected_object_name = post.text[:STR_NUMBER]
-        self.assertEqual(expected_object_name, str(post))
+        expected_object_name = PostModelTest.post.text[:STR_NUMBER]
+        self.assertEqual(expected_object_name, str(PostModelTest.post))
 
     def test_verbose_name(self):
         """verbose_name в полях поста совпадает с ожидаемым."""
@@ -68,9 +67,8 @@ class GroupModelTest(TestCase):
 
     def test_models_have_correct_object_names(self):
         """Проверяем, что у моделей группы корректно работает __str__."""
-        group = GroupModelTest.group
-        expected_object_name = group.title
-        self.assertEqual(expected_object_name, str(group))
+        expected_object_name = GroupModelTest.group.title
+        self.assertEqual(expected_object_name, str(GroupModelTest.group))
 
     def test_verbose_name(self):
         """verbose_name в полях модели совпадает с ожидаемым."""
